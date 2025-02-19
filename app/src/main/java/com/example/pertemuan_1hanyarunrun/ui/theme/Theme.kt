@@ -17,7 +17,7 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun HanyarunrunTheme(
-    darkTheme: Boolean = false, // Ubah sesuai preferensi atau logika sistem
+    darkTheme: Boolean = true, // Ubah sesuai preferensi atau logika sistem
     content: @Composable () -> Unit
 ) {
     MaterialTheme(

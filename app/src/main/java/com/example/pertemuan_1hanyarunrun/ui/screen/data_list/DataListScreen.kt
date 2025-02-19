@@ -1,4 +1,4 @@
-package com.example.pertemuan_1hanyarunrun.ui
+package com.example.pertemuan_1hanyarunrun.ui.screen.data_list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -106,19 +106,6 @@ fun DataListScreen(navController: NavHostController, viewModel: DataViewModel) {
                     }
                 }
             }
-        }
-        Button(
-            onClick = {
-                navController.navigate("form")
-            },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            colors = ButtonDefaults.buttonColors(SuccesColor)
-
-        ) {
-            Text(text = "Add Form")
         }
     }
 }

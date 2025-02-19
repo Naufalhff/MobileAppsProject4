@@ -1,10 +1,10 @@
 package com.example.pertemuan_1hanyarunrun.viewmodel
 
 import android.app.Application
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pertemuan_1hanyarunrun.data.AppDatabase
 import com.example.pertemuan_1hanyarunrun.data.DataEntity
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,7 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
         namaProvinsi: String,
         kodeKabupatenKota: String,
         namaKabupatenKota: String,
-        agen : String,
+        agen: String,
         jumlah: String,
         satuan: String,
         tahun: String
@@ -49,7 +49,7 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun deleteData(data: DataEntity){
+    fun deleteData(data: DataEntity) {
         viewModelScope.launch {
             dao.delete(data)
         }
@@ -61,3 +61,5 @@ class DataViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 }
+
+
