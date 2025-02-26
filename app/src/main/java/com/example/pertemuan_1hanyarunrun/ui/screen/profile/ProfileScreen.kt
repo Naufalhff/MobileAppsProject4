@@ -2,41 +2,44 @@ package com.example.pertemuan_1hanyarunrun.ui.screen.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.pertemuan_1hanyarunrun.data.ProfileEntity
+import com.example.pertemuan_1hanyarunrun.viewmodel.DataViewModel
 
 @Composable
 fun ProfileScreen(
+    navController: NavController,
+    viewModel: DataViewModel,
     modifier: Modifier = Modifier
 ) {
+    val profileList by viewModel.profileList.observeAsState(emptyList())
+    val profile = profileList.firstOrNull()
+
     var isEditing by remember { mutableStateOf(false) }
-    var studentName by remember { mutableStateOf("Mahasiswa JTK") }
-    var studentId by remember { mutableStateOf("22222") }
-    var studentEmail by remember { mutableStateOf("mahasiswa@jtk.polban.ac.id") }
+    var studentName by remember { mutableStateOf(profile?.name ?: "Mahasiswa JTK") }
+    var studentId by remember { mutableStateOf(profile?.studentId ?: "22222") }
+    var studentEmail by remember { mutableStateOf(profile?.email ?: "mahasiswa@jtk.polban.ac.id") }
     var profileUploaded by remember { mutableStateOf(false) }
+
+    // Perbarui state ketika `profileList` berubah
+    LaunchedEffect(profile) {
+        if (profile != null) {
+            studentName = profile.name
+            studentId = profile.studentId
+            studentEmail = profile.email
+        }
+    }
 
     Box(
         modifier = modifier
@@ -48,7 +51,7 @@ fun ProfileScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Profile Image Section (simulated upload)
+            // Profile Image Section
             Box(
                 modifier = Modifier
                     .size(120.dp)
@@ -58,7 +61,7 @@ fun ProfileScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = if (profileUploaded) "Uploaded Profile Picture" else "Default Profile Picture",
+                    contentDescription = "Profile Picture",
                     tint = if (profileUploaded) MaterialTheme.colorScheme.onPrimary else Color.Gray,
                     modifier = Modifier.size(80.dp)
                 )
@@ -66,11 +69,10 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             if (isEditing) {
-                // Edit mode: Display input fields to modify the student profile.
                 OutlinedTextField(
                     value = studentName,
                     onValueChange = { studentName = it },
-                    label = { Text("Student Name") },
+                    label = { Text("Nama Mahasiswa") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -84,50 +86,50 @@ fun ProfileScreen(
                 OutlinedTextField(
                     value = studentEmail,
                     onValueChange = { studentEmail = it },
-                    label = { Text("Student Email") },
+                    label = { Text("Email") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                // Simulated upload button for the profile photo.
+
                 Button(
                     onClick = { profileUploaded = true },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Upload Photo")
+                    Text("Upload Foto")
                 }
                 Spacer(modifier = Modifier.height(16.dp))
-                // Save button to exit edit mode.
+
                 Button(
-                    onClick = { isEditing = false },
+                    onClick = {
+                        if (profile != null) {
+                            viewModel.updateProfile(
+                                ProfileEntity(profile.id, studentName, studentEmail, studentId)
+                            )
+                        } else {
+                            viewModel.insertProfile(studentName, studentEmail, studentId)
+                        }
+                        isEditing = false
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Save")
+                    Text("Simpan")
                 }
             } else {
-                // Display mode: Show the student's profile details.
-                Text(
-                    text = studentName,
-                    style = MaterialTheme.typography.headlineSmall
-                )
+                Text(text = studentName, style = MaterialTheme.typography.headlineSmall)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "ID: $studentId",
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                Text(text = "ID: $studentId", style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = studentEmail,
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                Text(text = studentEmail, style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.height(16.dp))
-                // Edit button to switch to edit mode.
+
                 Button(
                     onClick = { isEditing = true },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Edit Profile")
+                    Text("Edit Profil")
                 }
             }
         }
     }
 }
+

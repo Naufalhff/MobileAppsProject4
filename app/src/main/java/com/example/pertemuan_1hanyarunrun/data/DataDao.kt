@@ -20,16 +20,4 @@ interface DataDao {
     @Delete
     suspend fun delete(data: DataEntity)
 
-    @Query("SELECT * FROM profile_table WHERE id = 1 LIMIT 1")
-    suspend fun getProfile(): ProfileEntity?
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertProfile(profile: ProfileEntity)
-
-    @Update
-    suspend fun updateProfile(profile: ProfileEntity)
-}
-
-interface ProfileDao {
-
 }
